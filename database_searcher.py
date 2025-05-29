@@ -1,9 +1,6 @@
 import sqlite3
 
-def data_base_searcher() -> list[str]:
-    """
-    Returns a list of all file paths stored in the contracts database.
-    """
+def data_base_searcher():
     conn = sqlite3.connect('contracts.db')
     cursor = conn.cursor()
     cursor.execute("SELECT file_path FROM contracts")
