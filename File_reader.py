@@ -40,15 +40,30 @@ def read_docx(file_path: str) -> str:
     return "\n".join([para.text for para in doc.paragraphs])
 
 
+def file_exists_in_db(name: str) -> bool:
+    conn = sqlite3.connect('contracts.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT 1 FROM contracts WHERE name = ?", (name,))
+    result = cursor.fetchone()
+    conn.close()
+    return result is not None
+
+
 def file_reader(file_path: str) -> Optional[str]:
     """
     Universal file reader that extracts text from .txt, .pdf, or .docx files.
+    Also checks if the file is already in the database, and inserts it if not.
     """
     if not os.path.exists(file_path):
         print("File not found!")
+        return None
 
     ext = os.path.splitext(file_path)[1].lower()
-    name = os.path.splitext(file_path)[0].lower()
+    name = os.path.basename(os.path.splitext(file_path)[0]).lower()  # only filename without extension
+
+    # Add to DB only if not already there
+    if not file_exists_in_db(name):
+        initialize_db(name, file_path)
 
     if ext == '.txt':
         return read_txt(file_path)
@@ -58,6 +73,7 @@ def file_reader(file_path: str) -> Optional[str]:
         return read_docx(file_path)
     else:
         print(f"Unsupported file extension: {ext}")
+
 
 if __name__ == "__main__":
     path = "IDA_Star.pdf" 
