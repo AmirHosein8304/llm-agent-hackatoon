@@ -2,7 +2,7 @@ import autogen
 from File_reader import file_reader
 
 config_list = autogen.config_list_from_json(
-    "OAI_CONFIG_LIST",
+    "OAI_CONFIG_LIST.json",
     filter_dict={
         "model": ["gpt-4-turbo"],
     },
@@ -13,7 +13,7 @@ extractor_agent = autogen.ConversableAgent(
     llm_config={
         "config_list": config_list,
         "temperature": 0,
-        "tools": {
+        "tools": [{
             "type": "function",
             "function": {
                 "name": "file_reader",
@@ -30,6 +30,7 @@ extractor_agent = autogen.ConversableAgent(
                 },
             },
         },
+        ],
         "timeout": 600,
         "cache_seed": 42,
     },
