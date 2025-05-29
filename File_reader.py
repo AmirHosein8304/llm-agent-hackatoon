@@ -20,12 +20,12 @@ def initialize_db(name):
 
 
 
-def read_txt(name: str) -> str:
-    with open(name, 'r', encoding='utf-8') as f:
+def read_txt(name):
+    with open(name, 'r') as f:
         return f.read()
 
 
-def read_pdf(name: str) -> str:
+def read_pdf(name):
     text = ""
     with open(name, 'rb') as f:
         reader = PyPDF2.PdfReader(f)
@@ -34,12 +34,12 @@ def read_pdf(name: str) -> str:
     return text
 
 
-def read_docx(name: str) -> str:
+def read_docx(name):
     doc = Document(name)
     return "\n".join([para.text for para in doc.paragraphs])
 
 
-def file_exists_in_db(name: str) -> bool:
+def file_exists_in_db(name):
     conn = sqlite3.connect('contracts.db')
     cursor = conn.cursor()
     cursor.execute("SELECT 1 FROM contracts WHERE name = ?", (name))
@@ -48,19 +48,14 @@ def file_exists_in_db(name: str) -> bool:
     return result is not None
 
 
-def file_reader(name: str) -> Optional[str]:
-    """
-    Universal file reader that extracts text from .txt, .pdf, or .docx files.
-    Also checks if the file is already in the database, and inserts it if not.
-    """
+def file_reader(name):
     if not os.path.exists(name):
         print("File not found!")
         return None
 
     ext = os.path.splitext(name)[1].lower()
-    name = os.path.basename(os.path.splitext(name)[0]).lower()  # only filename without extension
+    name = os.path.basename(os.path.splitext(name)[0]).lower()
 
-    # Add to DB only if not already there
     if not file_exists_in_db(name):
         initialize_db(name)
 

@@ -1,6 +1,6 @@
 import autogen
 from File_reader import file_reader
-import sqlite3
+from database_searcher import data_base_searcher
 
 config_list = autogen.config_list_from_json(
     "OAI_CONFIG_LIST.json",
@@ -31,6 +31,22 @@ extractor_agent = autogen.ConversableAgent(
                 },
             },
         },
+                    {
+            "type": "function",
+            "function": {
+                "name": "db_reader",
+                "description": "Read all of file names that exist",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "file_path": {
+                            "type": "string",
+                            "description": "The path of the file to read.",
+                        },
+                    },
+                },
+            },
+        }
         ],
         "timeout": 600,
         "cache_seed": 42,
@@ -63,7 +79,8 @@ user_proxy_agent = autogen.UserProxyAgent(
     code_execution_config=False,
     is_termination_msg=lambda x: (x.get("content") or "").rstrip().endswith("TERMINATE"),
     function_map={
-        "file_reader": file_reader
+        "file_reader": file_reader,
+        "db_reader": data_base_searcher
     },
 )
 chat_result = user_proxy_agent.initiate_chat(
