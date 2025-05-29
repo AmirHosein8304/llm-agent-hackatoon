@@ -2,6 +2,23 @@ import os
 from typing import Optional
 from docx import Document
 import PyPDF2
+import sqlite3
+
+def initialize_db(name,file_path):
+    conn = sqlite3.connect('contracts.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS contracts (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            file_path TEXT NOT NULL
+        )
+    ''')
+    cursor.execute("INSERT INTO contracts (name, file_path) VALUES (?, ?)", 
+                   (name, file_path))
+    conn.commit()
+    conn.close()
+
 
 
 def read_txt(file_path: str) -> str:
@@ -31,6 +48,7 @@ def file_reader(file_path: str) -> Optional[str]:
         print("File not found!")
 
     ext = os.path.splitext(file_path)[1].lower()
+    name = os.path.splitext(file_path)[0].lower()
 
     if ext == '.txt':
         return read_txt(file_path)
