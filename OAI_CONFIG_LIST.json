@@ -1,0 +1,7 @@
+[
+    {
+        "model" : "gpt-4-turbo",
+        "api_key" : "tpsg-yLNFZPaJMJ2jYc8vMIicreK7DCM7zov",
+        "base_url" : "https://api.metisai.ir/openai/v1"
+    }
+]
