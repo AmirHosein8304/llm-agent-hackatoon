@@ -1,5 +1,6 @@
 import autogen
 from File_reader import file_reader
+import sqlite3
 
 config_list = autogen.config_list_from_json(
     "OAI_CONFIG_LIST.json",
@@ -58,20 +59,24 @@ extractor_agent = autogen.ConversableAgent(
 user_proxy_agent = autogen.UserProxyAgent(
     "UserProxyAgent",
     human_input_mode="ALWAYS",
-    max_consecutive_auto_reply=4,
+    max_consecutive_auto_reply=10,
     code_execution_config=False,
-    is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
+    is_termination_msg=lambda x: (x.get("content") or "").rstrip().endswith("TERMINATE"),
     function_map={
         "file_reader": file_reader
     },
 )
 chat_result = user_proxy_agent.initiate_chat(
     extractor_agent,
-    message="Please analyze the contract 'Asset Purchase Agreement - SD Acquisition Inc. and Transgenomic Inc. - Sample Contracts and Business Forms.pdf'.",
-    sender=extractor_agent,
+    message=input("ask your question"),
+    sender=user_proxy_agent,
 )
 
-final_response = chat_result.chat_history
-if chat_result.chat_history and chat_result.chat_history[-1].get('content'):
-    final_response = chat_result.chat_history[-1].get('content')
-print(final_response)
+
+final_response = None
+for message in reversed(chat_result.chat_history):
+    if message.get("role") == "assistant" and message.get("content"):
+        final_response = message["content"]
+        break
+
+print(final_response or "No final response found.")
