@@ -34,7 +34,7 @@ extractor_agent = autogen.ConversableAgent(
                     {
             "type": "function",
             "function": {
-                "name": "db_reader",
+                "name": "data_base_searcher",
                 "description": "Read all of file names that exist",
                 "parameters": {
                     "type": "object",
@@ -84,7 +84,7 @@ Supporting Evidence: [Direct quote or clause that supports the answer]
 
 You are running on GPT-4-turbo and expected to be reliable, fast, and legally cautious.
 '''
-
+)
 
 user_proxy_agent = autogen.UserProxyAgent(
     "UserProxyAgent",
@@ -94,7 +94,7 @@ user_proxy_agent = autogen.UserProxyAgent(
     is_termination_msg=lambda x: (x.get("content") or "").rstrip().endswith("TERMINATE"),
     function_map={
         "file_reader": file_reader,
-        "db_reader": data_base_searcher
+        "data_base_searcher": data_base_searcher
     },
 )
 chat_result = user_proxy_agent.initiate_chat(
