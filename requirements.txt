@@ -8,3 +8,7 @@ openai
 
 # Jupyter
 jupyterlab
+
+#filereader
+python-docx
+PyPDF2

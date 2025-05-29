@@ -28,7 +28,7 @@ def file_reader(file_path: str) -> Optional[str]:
     Universal file reader that extracts text from .txt, .pdf, or .docx files.
     """
     if not os.path.exists(file_path):
-        raise FileNotFoundError(f"File does not exist: {file_path}")
+        print("File not found!")
 
     ext = os.path.splitext(file_path)[1].lower()
 
@@ -39,7 +39,7 @@ def file_reader(file_path: str) -> Optional[str]:
     elif ext == '.docx':
         return read_docx(file_path)
     else:
-        raise ValueError(f"Unsupported file extension: {ext}")
+        print(f"Unsupported file extension: {ext}")
 
 if __name__ == "__main__":
     path = "IDA_Star.pdf" 
