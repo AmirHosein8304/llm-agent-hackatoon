@@ -16,11 +16,9 @@ def initialize_db(name):
     conn.commit()
     conn.close()
 
-
 def read_txt(path):
     with open(path, 'r', encoding='utf-8') as f:
         return f.read()
-
 
 def read_pdf(path):
     text = ""
@@ -30,56 +28,52 @@ def read_pdf(path):
             text += page.extract_text() or ""
     return text
 
-
 def read_docx(path):
     doc = Document(path)
     return "\n".join([para.text for para in doc.paragraphs])
-
 
 def file_exists_in_db(name):
     conn = sqlite3.connect('contracts.db')
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT 1 FROM contracts WHERE name = ?", (name,))
-    except:
+    except sqlite3.OperationalError:
         cursor.execute('''
-        CREATE TABLE IF NOT EXISTS contracts (
-            id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL
-        )
-    ''')
+            CREATE TABLE IF NOT EXISTS contracts (
+                id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL
+            )
+        ''')
         cursor.execute("SELECT 1 FROM contracts WHERE name = ?", (name,))
     result = cursor.fetchone()
     conn.close()
     return result is not None
 
-
-def file_reader(path):
-    if not os.path.exists(path):
+def file_reader(file_path):
+    if not os.path.exists(file_path):
         print("File not found!")
         return None
 
-    ext = os.path.splitext(path)[1].lower()
-    name = os.path.basename(os.path.splitext(path)[0]).lower()
+    ext = os.path.splitext(file_path)[1].lower()
+    name = os.path.basename(os.path.splitext(file_path)[0]).lower()
 
     if not file_exists_in_db(name):
         initialize_db(name)
 
     if ext == '.txt':
-        return read_txt(path)
+        return read_txt(file_path)
     elif ext == '.pdf':
-        return read_pdf(path)
+        return read_pdf(file_path)
     elif ext == '.docx':
-        return read_docx(path)
+        return read_docx(file_path)
     else:
         print(f"Unsupported file extension: {ext}")
         return None
 
-
 if __name__ == "__main__":
-    path = "contract1.pdf"  # Make sure this is in the same directory or provide full path
+    test_path = "contract1.pdf"  # Example file
     try:
-        content = file_reader(path)
+        content = file_reader(file_path=test_path)
         if content:
             print("File content preview:\n", content[:1000])
         else:
