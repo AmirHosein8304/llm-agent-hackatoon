@@ -55,7 +55,7 @@ def file_reader(file_path):
         return None
 
     ext = os.path.splitext(file_path)[1].lower()
-    name = os.path.basename(os.path.splitext(file_path)[0]).lower()
+    name = file_path
 
     if not file_exists_in_db(name):
         initialize_db(name)

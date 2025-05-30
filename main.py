@@ -99,7 +99,7 @@ user_proxy_agent = autogen.UserProxyAgent(
 )
 chat_result = user_proxy_agent.initiate_chat(
     extractor_agent,
-    message=input("ask your question"),
+    message=input("ask your question:\n"),
     sender=user_proxy_agent,
 )
 
